@@ -1,18 +1,19 @@
 const express = require('express')
-const db = require('../../../data/dbConfig')
 const router = express.Router()
+const db = require('../../../data/dbConfig')
 
-router.get('/', (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
-
+    return res.json(await db("places").select())
   } catch (error) {
     next(error)
   }
 })
 
-router.get('/:id', (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
   try {
-
+    const place = await db("places").where("id", req.params.id).select()
+    return res.json(place)
   } catch (error) {
     next(error)
   }
