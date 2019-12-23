@@ -1,13 +1,13 @@
 const express = require('express')
 const server = express()
-const routes = require('./routes')
 const middleware = require('./middleware')
+const routes = require('./routes')
 
 server.use(express.json())
 middleware(server)
 routes(server)
 
-server.get("/", (req, res, next) => {
+server.get("/", (req, res) => {
   res.send("<h2>I am your server.</h2>")
 })
 
