@@ -26,13 +26,17 @@ export default function AutoCompleteForm() {
         onSelect={handleSelect}
       >
         {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-          <div>
-            <p>Latitude: {coordinates.lat}</p>
-            <p>Longitude: {coordinates.lng}</p>
+          <>
+            <div className="coordinatesContainer">
+              <p>Latitude: {coordinates.lat}</p>
+              <p>Longitude: {coordinates.lng}</p>
+            </div>
 
-            <input {...getInputProps({ placeholder: "Type address" })} />
+            <div className="inputContainer">
+              <input className="input" {...getInputProps({ placeholder: "Type address" })} />
+            </div>  
 
-            <div>
+            <div className="suggestionContainer">
               {loading ? <div>...loading</div> : null}
 
               {suggestions.map(suggestion => {
@@ -41,13 +45,13 @@ export default function AutoCompleteForm() {
                 };
 
                 return (
-                  <div {...getSuggestionItemProps(suggestion, { style })}>
+                  <div className="suggestion" {...getSuggestionItemProps(suggestion, { style })}>
                     {suggestion.description}
                   </div>
                 );
               })}
             </div>
-          </div>
+          </>
         )}
       </PlacesAutocomplete>
     </div>
