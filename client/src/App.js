@@ -1,27 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import { GoogleMap, withScriptjs, withGoogleMap } from 'react-google-maps';
+import { GoogleMap, withScriptjs, withGoogleMap, Marker, InfoWindow } from 'react-google-maps';
 import axios from 'axios';
 import AutoCompleteForm from './components/AutoCompleteForm';
 
 function Map() {
-  return <GoogleMap defaultZoom={10} defaultCenter={{ lat: 41.081444, lng: -81.519005 }} />
+  const [places, setPlaces] = useState([])
+  const [selectedPlace, setSelectedPlace] = useState(null)
+
+  useEffect(() => {
+    axios.get('http://localhost:4000/api/places')
+      .then(res => {
+        setPlaces(res.data)
+      })
+      .catch(err => {
+        console.log(err, 'There was an issue catching the data.')
+      })
+  }, [])
+
+  return <GoogleMap 
+          defaultZoom={10} 
+          defaultCenter={{ lat: 41.081444, lng: -81.519005 }}>
+
+          {places.map(place => {
+            return (
+              <Marker 
+                key={place.id} 
+                position={{ lat: place.lat, lng: place.long }} 
+                onClick={() => {
+                  setSelectedPlace(place)
+                }}
+              />
+            )
+          })}
+
+          {selectedPlace && (
+            <InfoWindow position={{ lat: selectedPlace.lat, lng: selectedPlace.long }} onCloseClick={() => setSelectedPlace(null)} >
+              <div>
+                <h2>{selectedPlace.name}</h2>
+                <h3>{selectedPlace.address}</h3>
+              </div>
+            </InfoWindow>
+          )}
+          </ GoogleMap>
 }
 
 const WrappedMap = withScriptjs(withGoogleMap(Map))
 
 function App() {
-  // const [places, setPlaces] = useState([])
-
-  // useEffect(() => {
-  //   axios.get('http://localhost:4000/api/places')
-  //     .then(res => {
-  //       setPlaces(res.data)
-  //     })
-  //     .catch(err => {
-  //       console.log(err, 'There was an issue catching the data.')
-  //     })
-  // }, [])
-
+  
   return (
     <div className="App">
       <WrappedMap 
@@ -32,16 +58,6 @@ function App() {
       mapElement={<div style={{ height: `100%` }} />} />
 
     <AutoCompleteForm />
-
-      {/* {places.map(place => {
-        return (
-          <div className='placeContainer' key={place.id}>
-            <h2>Name: {place.name}</h2>
-            <h3>Address: {place.address} Zipcode:{place.zipcode}</h3>
-            <h3>Website: {place.website}</h3>
-          </div>
-        )
-      })} */}
 
     </div>
   );
